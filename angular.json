@@ -25,7 +25,12 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "node_modules/@admin-components/styles/custom-theme.scss",
+							"node_modules/@admin-components/styles/fontsStyles.scss",
+							"node_modules/@admin-components/styles/palettes.scss",
+							"node_modules/@admin-components/styles/variables.scss",
+							"node_modules/@admin-components/styles/mixins.scss",
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -84,7 +89,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ],
             "scripts": []
           }

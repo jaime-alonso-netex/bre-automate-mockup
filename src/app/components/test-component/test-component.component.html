@@ -1,0 +1,7 @@
+<p>test-component works!</p>
+<div>Tooltip: {{subtext}} {{ text && subtext ? '·' : '' }} {{ text }}</div>
+<br/>
+<input type="text" placeholder="subtext" [(ngModel)]="subtext"/>
+<br/>
+<br/>
+<input type="text" placeholder="text" [(ngModel)]="text"/>
