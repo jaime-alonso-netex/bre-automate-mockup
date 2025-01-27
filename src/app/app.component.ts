@@ -1,77 +1,85 @@
-import { AfterViewInit, Component, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, OnInit, AfterViewInit } from '@angular/core';
+import { UsersService } from './services/users.service';
 import { CommonModule } from '@angular/common';
-import { Chip, TestChipInputComponent } from './components/test-chip-input/test-chip-input.component';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { SidenavButtonComponent, SidenavComponent, SidenavMenuButtonComponent, StatusType, TableComponent, ToolbarComponent } from '@netexknowledge/admin-components';
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
+import { Input } from '@angular/core';
+import { debounceTime, delay, fromEvent } from 'rxjs';
+import { User } from './interfaces/user.interface';
+
+@Component({
+  selector: 'simple-component',
+  template: `<p>{{ data }}</p>`,
+  standalone: true
+})
+export class SimpleComponent {
+  @Input() text: string = '';
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public data: string) { }
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, TestChipInputComponent],
+  imports: [
+    CommonModule,
+    SidenavComponent,
+    SidenavButtonComponent,
+    SidenavMenuButtonComponent,
+    TableComponent,
+    ToolbarComponent
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.scss',
 })
-export class AppComponent implements AfterViewInit, OnChanges, OnInit {
+export class AppComponent implements OnInit, AfterViewInit {
 
+  currentPage = 1;
+  hasMorePages = true;
+  selectable = false;
+  sidenavOpen = false;
+  status!: StatusType;
   title = 'demo-app';
-  chips: Chip[] = [
-    {
-      color: 'accent',
-      subtext: 'Course lorem ipsum dolor sic amet consectetur',
-      text: 'Course lorem ipsum dolor sic amet consectetur',
-    },
-    {
-      color: 'accent',
-      text: '20/12/2024',
-      iconFontFamily: 'material-icons-outlined',
-      iconFontName: 'calendar_today'
-    },
-    {
-      color: 'accent',
-      text: 'Lisa Smith lorem ipsum dolor sic amet consectetur',
-      img: '../assets/images/user_image.png'
-    },
-    {
-      color: 'light',
-      text: 'Course lorem ipsum dolor sic amet consectetur',
-    },
-    {
-      color: 'light',
-      text: '20/12/2024',
-      iconFontFamily: 'material-icons-outlined',
-      iconFontName: 'calendar_today'
-    },
-    {
-      color: 'light',
-      text: 'Lisa Smith lorem ipsum dolor sic amet consectetur',
-      img: '../assets/images/user_image.png'
-    },
-  ];
-  // chipsText = [];
-  chipsImage: Chip[] = [];
-  chipsIcon: Chip[] = [];
+  users: User[] = [];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    
-  }
+  @ViewChild('mainDiv') mainDiv!: ElementRef;
 
-  ngOnInit(): void {
-    
+  constructor(private usersService: UsersService) {}
+
+  ngOnInit() {
+    this.loadUsers('loading-data');
   }
 
   ngAfterViewInit(): void {
-    
+    fromEvent(this.mainDiv.nativeElement, 'scroll')
+      .pipe(debounceTime(1000))
+      .subscribe(() => this.onMainDivScroll());
+  }
+  
+  onSidenavExpanded() {
+    this.sidenavOpen = !this.sidenavOpen;
   }
 
-  onAddedChip(value: string) {
-    console.log('onAddedChipText', value);
-    let addedChip: Chip = {
-      text: value,
-      color: 'accent'
-    } 
-    this.chips.push(addedChip);
-  }
-  onRemovedChip(chip: Chip) {
-    console.log('onRemovedChip', chip);
+  loadUsers(status: StatusType) {
+
+    if (!this.hasMorePages) { return; }
+
+    this.status = status;
+
+    this.usersService.getUsers(this.currentPage).pipe(
+      delay(1000)
+    ).subscribe((response) => {
+      this.users = [...this.users, ...response.data];
+      this.status = 'loaded-data';
+      this.hasMorePages = response.hasMore;
+      this.currentPage++;
+    });
   }
 
-};
+  onMainDivScroll(): void {
+    const mainDiv = this.mainDiv.nativeElement;
+    if (mainDiv.scrollTop + mainDiv.clientHeight >= mainDiv.scrollHeight &&
+      this.status !== 'loading-data') {
+      this.loadUsers('adding-data');
+    }
+  }
+}

@@ -1,8 +1,61 @@
-<h2>Test chip input component</h2>
+<div class="app-layout">
+  <div class="app-layout__left-wrapper">
+    <admin-sidenav
+      [opened]="sidenavOpen"
+      [icon]="'icon-custom_automate'"
+      [iconFontFamily]="'icons-custom'"
+      [title]="'Your plan'"
+      [progressBarText]="'226 of 500 executions used.'"
+      [progressBarValue]="45"
+      [progressBarColor]="'accent'"
+      [buttonText]="'Upgrade'"
+      (toggleSidenav)="onSidenavExpanded()">
+        <div class="admin-rules-page--sidenav__buttons">
+          <admin-sidenav-button
+            type="submit"
+            [hasIcon]="true"
+            icon="people"
+            iconFontFamily="material-icons-outlined"
+            text="Experts"
+            tooltip="Experts"
+            routerLink="procesos"
+          ></admin-sidenav-button>
+          <admin-sidenav-menu-button
+            [expanded]="sidenavOpen"
+            id="1"
+            text="Triggers"
+            icon="icon-custom_bolt"
+            iconFontFamily="icons-custom">
+            <div class="expansion-panel-content_buttons">
+              <admin-sidenav-button
+                type="submit"
+                text="Proactivity levels"
+                tooltip="Proactivity levels"
+                routerLink="requests"
+              ></admin-sidenav-button>
+            </div>
+          </admin-sidenav-menu-button>
+        </div>
+    </admin-sidenav>  
+  </div>
+  <div class="app-layout__right-wrapper">
+    <admin-toolbar
+	    title="My Automate Demo app"
+	    logoImgUrl="assets/images/app_automate.svg"
+	    [breadcrumbs]="[]">
+    </admin-toolbar>
+    <div class="main" #mainDiv>
+      <admin-table
+        [columnDefinition]="[
+          { name: 'id', displayName: 'ID', visible: true },
+          { name: 'first_name', displayName: 'First Name', visible: true },
+          { name: 'last_name', displayName: 'Last Name', visible: true  },
+          { name: 'email', displayName: 'Email', visible: true  }
+        ]"
+        [rowData]="users"
+        [status]="status">
+      </admin-table>
+    </div>
+  </div>
+</div>
 
-<test-chip-input 
-    [hint]="'Assitive text'"
-    [label]="'My label'" 
-    [chips]="chips"
-    (addedChip)="onAddedChip($event)"
-    (removedChip)="onRemovedChip($event)" />

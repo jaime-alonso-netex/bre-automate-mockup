@@ -8,7 +8,7 @@
       "schematics": {},
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "test",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -22,16 +22,21 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*",
+                "input": "./node_modules/@netexknowledge/admin-components/icons",
+                "output": "./assets/"
+             }
             ],
             "styles": [
-              "node_modules/@admin-components/styles/custom-theme.scss",
-							"node_modules/@admin-components/styles/fontsStyles.scss",
-							"node_modules/@admin-components/styles/palettes.scss",
-							"node_modules/@admin-components/styles/variables.scss",
-							"node_modules/@admin-components/styles/mixins.scss",
+              "node_modules/@netexknowledge/admin-components/styles/fontsStyles.scss",      
+              "node_modules/@netexknowledge/admin-components/styles/main.scss",
               "src/styles.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["./node_modules/@netexknowledge/admin-components/styles"]
+            },
             "scripts": []
           },
           "configurations": {
